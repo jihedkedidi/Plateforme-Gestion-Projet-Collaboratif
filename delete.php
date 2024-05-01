@@ -1,11 +1,24 @@
 <?php
-include "db_conn.php";
-$id = $_GET["id"];
-$sql = "DELETE FROM `crud` WHERE id = $id";
-$result = mysqli_query($conn, $sql);
+include "db_conn.php"; // Include the file with PDO connection
 
-if ($result) {
-  header("Location: index.php?msg=Data deleted successfully");
-} else {
-  echo "Failed: " . mysqli_error($conn);
+$id = $_GET["id"];
+
+try {
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    // Set the PDO error mode to exception
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Prepare SQL statement
+    $stmt = $pdo->prepare("DELETE FROM `crud` WHERE id = :id");
+
+    // Bind parameters
+    $stmt->bindParam(':id', $id);
+
+    // Execute the statement
+    $stmt->execute();
+
+    header("Location: index.php?msg=Data deleted successfully");
+} catch (PDOException $e) {
+    echo "Failed: " . $e->getMessage();
 }
+?>

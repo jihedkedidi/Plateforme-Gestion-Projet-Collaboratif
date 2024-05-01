@@ -1,14 +1,15 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "php-crud";
+$servername = "localhost:3305";
+$username = "root"; // Replace 'your_username' with your MySQL username
+$password = "root123"; // Replace 'your_password' with your MySQL password
+$dbname = "bdprojet";
 
-// Create connection
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-
-// Check connection
-if (!$conn) {
-  die("Connection failed: " . mysqli_connect_error());
+try {
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    // Set the PDO error mode to exception
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "";
+} catch(PDOException $e) {
+    echo " " . $e->getMessage();
 }
-// echo "Connected successfully";
+?>

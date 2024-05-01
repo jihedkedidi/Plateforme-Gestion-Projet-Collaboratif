@@ -1,28 +1,57 @@
 <?php
-include "db_conn.php";
+include "db_conn.php"; // Include the file with PDO connection
+
 $id = $_GET["id"];
 
 if (isset($_POST["submit"])) {
-  $first_name = $_POST['first_name'];
-  $last_name = $_POST['last_name'];
-  $email = $_POST['email'];
-  $gender = $_POST['gender'];
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $email = $_POST['email'];
+    $role = $_POST['role']; // Updated from 'gender' to 'role'
+    $password = $_POST['password']; // New field
+    $mail = $_POST['mail']; // New field
 
-  $sql = "UPDATE `crud` SET `first_name`='$first_name',`last_name`='$last_name',`email`='$email',`gender`='$gender' WHERE id = $id";
+    try {
+        $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        // Set the PDO error mode to exception
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  $result = mysqli_query($conn, $sql);
+        // Prepare SQL statement
+        $stmt = $pdo->prepare("UPDATE `crud` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `role`=:role, `password`=:password, `mail`=:mail WHERE id = :id");
 
-  if ($result) {
-    header("Location: index.php?msg=Data updated successfully");
-  } else {
-    echo "Failed: " . mysqli_error($conn);
-  }
+        // Bind parameters
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':first_name', $first_name);
+        $stmt->bindParam(':last_name', $last_name);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':role', $role);
+        $stmt->bindParam(':password', $password);
+        $stmt->bindParam(':mail', $mail);
+
+        // Execute the statement
+        $stmt->execute();
+
+        header("Location: index.php?msg=Data updated successfully");
+    } catch (PDOException $e) {
+        echo "Failed: " . $e->getMessage();
+    }
 }
 
+// Fetch existing data for the selected user
+try {
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    // Set the PDO error mode to exception
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Prepare SQL statement to fetch user data by ID
+    $stmt = $pdo->prepare("SELECT * FROM `crud` WHERE id = :id LIMIT 1");
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the data
+} catch (PDOException $e) {
+    echo "Failed: " . $e->getMessage();
+}
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -43,20 +72,13 @@ if (isset($_POST["submit"])) {
 
 <body>
   <nav class="navbar navbar-light justify-content-center fs-3 mb-5" style="background-color: #00ff5573;">
-    PHP Complete CRUD Application
-  </nav>
+  Plateforme-Gestion-Projet-Collaboratif  </nav>
 
   <div class="container">
     <div class="text-center mb-4">
       <h3>Edit User Information</h3>
       <p class="text-muted">Click update after changing any information</p>
     </div>
-
-    <?php
-    $sql = "SELECT * FROM `crud` WHERE id = $id LIMIT 1";
-    $result = mysqli_query($conn, $sql);
-    $row = mysqli_fetch_assoc($result);
-    ?>
 
     <div class="container d-flex justify-content-center">
       <form action="" method="post" style="width:50vw; min-width:300px;">
@@ -78,13 +100,26 @@ if (isset($_POST["submit"])) {
         </div>
 
         <div class="form-group mb-3">
-          <label>Gender:</label>
+          <label>Role:</label>
           &nbsp;
-          <input type="radio" class="form-check-input" name="gender" id="male" value="male" <?php echo ($row["gender"] == 'male') ? "checked" : ""; ?>>
-          <label for="male" class="form-input-label">Male</label>
+          <input type="radio" class="form-check-input" name="role" id="devOps" value="devOps" <?php echo ($row["role"] == 'devOps') ? "checked" : ""; ?>>
+          <label for="admin" class="form-input-label">deVops</label>
           &nbsp;
-          <input type="radio" class="form-check-input" name="gender" id="female" value="female" <?php echo ($row["gender"] == 'female') ? "checked" : ""; ?>>
-          <label for="female" class="form-input-label">Female</label>
+          <input type="radio" class="form-check-input" name="role" id="Testeur" value="Testeur" <?php echo ($row["role"] == 'Testeur') ? "checked" : ""; ?>>
+          <label for="user" class="form-input-label">Testeur</label>
+          &nbsp;
+          <input type="radio" class="form-check-input" name="role" id="Developpeur" value="Developpeur" <?php echo ($row["role"] == 'Developpeur') ? "checked" : ""; ?>>
+          <label for="user" class="form-input-label">User</label>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Password:</label>
+          <input type="password" class="form-control" name="password" placeholder="Enter new password">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email:</label>
+          <input type="email" class="form-control" name="mail" value="<?php echo $row['mail'] ?>">
         </div>
 
         <div>
@@ -96,8 +131,4 @@ if (isset($_POST["submit"])) {
   </div>
 
   <!-- Bootstrap -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-
-</body>
-
-</html>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBI
