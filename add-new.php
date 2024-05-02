@@ -1,38 +1,14 @@
 <?php
-include "db_conn.php"; // Include the file with PDO connection
+require_once 'User.php';
 
 if (isset($_POST["submit"])) {
-   $first_name = $_POST['first_name'];
-   $last_name = $_POST['last_name'];
-   $email = $_POST['email'];
-   $role = $_POST['role']; // Updated from 'gender' to 'role'
-   $password = $_POST['password']; // New field
-
-   try {
-      $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-      // Set the PDO error mode to exception
-      $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-      // Prepare SQL statement
-      $sql = "INSERT INTO `crud`(`first_name`, `last_name`, `email`, `role`, `password`) VALUES (:first_name, :last_name, :email, :role, :password)";
-      $stmt = $pdo->prepare($sql);
-
-      // Bind parameters
-      $stmt->bindParam(':first_name', $first_name);
-      $stmt->bindParam(':last_name', $last_name);
-      $stmt->bindParam(':email', $email);
-      $stmt->bindParam(':role', $role); // Updated binding
-      $stmt->bindParam(':password', $password); // New binding
-
-      // Execute the statement
-      $stmt->execute();
-
-      header("Location: index.php?msg=New record created successfully");
-   } catch (PDOException $e) {
-      echo "Failed: " . $e->getMessage();
-   }
+    $user = new User();
+    $msg = $user->addUser($_POST['first_name'], $_POST['last_name'], $_POST['email'], $_POST['role'], $_POST['password']);
+    header("Location: index.php?msg=$msg");
+    exit();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
