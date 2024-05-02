@@ -9,7 +9,6 @@ if (isset($_POST["submit"])) {
     $email = $_POST['email'];
     $role = $_POST['role']; // Updated from 'gender' to 'role'
     $password = $_POST['password']; // New field
-    $mail = $_POST['mail']; // New field
 
     try {
         $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -17,7 +16,7 @@ if (isset($_POST["submit"])) {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Prepare SQL statement
-        $stmt = $pdo->prepare("UPDATE `crud` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `role`=:role, `password`=:password, `mail`=:mail WHERE id = :id");
+        $stmt = $pdo->prepare("UPDATE `crud` SET `first_name`=:first_name, `last_name`=:last_name, `email`=:email, `role`=:role, `password`=:password WHERE id = :id");
 
         // Bind parameters
         $stmt->bindParam(':id', $id);
@@ -26,7 +25,6 @@ if (isset($_POST["submit"])) {
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':role', $role);
         $stmt->bindParam(':password', $password);
-        $stmt->bindParam(':mail', $mail);
 
         // Execute the statement
         $stmt->execute();
@@ -117,10 +115,6 @@ try {
           <input type="password" class="form-control" name="password" placeholder="Enter new password">
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">Email:</label>
-          <input type="email" class="form-control" name="mail" value="<?php echo $row['mail'] ?>">
-        </div>
 
         <div>
           <button type="submit" class="btn btn-success" name="submit">Update</button>

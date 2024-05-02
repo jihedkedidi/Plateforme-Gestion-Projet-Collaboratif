@@ -1,6 +1,4 @@
-<?php
-include "db_conn.php";
-?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -69,7 +67,7 @@ try {
                 <td><?php echo $row["first_name"] ?></td>
                 <td><?php echo $row["last_name"] ?></td>
                 <td><?php echo $row["email"] ?></td>
-                <td><?php echo $row["Role"] ?></td>
+                <td><?php echo $row["role"] ?></td>
                 <td>
                     <a href="edit.php?id=<?php echo $row["id"] ?>" class="link-dark"><i class="fa-solid fa-pen-to-square fs-5 me-3"></i></a>
                     <a href="delete.php?id=<?php echo $row["id"] ?>" class="link-dark"><i class="fa-solid fa-trash fs-5"></i></a>
