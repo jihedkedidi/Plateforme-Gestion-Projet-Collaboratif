@@ -1,38 +1,4 @@
-<?php
-include "db_conn.php"; // Include the file with PDO connection
 
-if (isset($_POST["submit"])) {
-   $first_name = $_POST['first_name'];
-   $last_name = $_POST['last_name'];
-   $email = $_POST['email'];
-   $role = $_POST['role']; // Updated from 'gender' to 'role'
-   $password = $_POST['password']; // New field
-
-   try {
-      $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-      // Set the PDO error mode to exception
-      $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-      // Prepare SQL statement
-      $sql = "INSERT INTO `crud`(`first_name`, `last_name`, `email`, `role`, `password`) VALUES (:first_name, :last_name, :email, :role, :password)";
-      $stmt = $pdo->prepare($sql);
-
-      // Bind parameters
-      $stmt->bindParam(':first_name', $first_name);
-      $stmt->bindParam(':last_name', $last_name);
-      $stmt->bindParam(':email', $email);
-      $stmt->bindParam(':role', $role); // Updated binding
-      $stmt->bindParam(':password', $password); // New binding
-
-      // Execute the statement
-      $stmt->execute();
-
-      header("Location: index.php?msg=New record created successfully");
-   } catch (PDOException $e) {
-      echo "Failed: " . $e->getMessage();
-   }
-}
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -63,16 +29,14 @@ if (isset($_POST["submit"])) {
 
       <div class="container d-flex justify-content-center">
          <form action="action.php" method="post" style="width:50vw; min-width:300px;">
+         <input type="hidden" name="registeradmin" value="1" >
             <div class="row mb-3">
                <div class="col">
                   <label class="form-label">First Name:</label>
-                  <input type="text" class="form-control" name="first_name" placeholder="Name">
+                  <input type="text" class="form-control" name="name" placeholder="Name">
                </div>
 
-               <div class="col">
-                  <label class="form-label">Last Name:</label>
-                  <input type="text" class="form-control" name="last_name" placeholder="LAsst name">
-               </div>
+            
             </div>
 
             <div class="mb-3">
