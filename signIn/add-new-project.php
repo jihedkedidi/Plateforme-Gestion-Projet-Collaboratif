@@ -1,15 +1,3 @@
-<?php
-require_once 'User.php';
-
-if (isset($_POST["submit"])) {
-    $user = new User();
-    $msg = $user->addUser($_POST['first_name'], $_POST['last_name'], $_POST['email'], $_POST['role'], $_POST['password']);
-    header("Location: index.php?msg=$msg");
-    exit();
-}
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,44 +22,22 @@ if (isset($_POST["submit"])) {
    <div class="container">
       <div class="text-center mb-4">
          <h3>Add New User</h3>
-         <p class="text-muted">Complete the form below to add a new user</p>
+         <p class="text-muted">Complete the form below to add a new project</p>
       </div>
 
       <div class="container d-flex justify-content-center">
          <form action="action.php" method="post" style="width:50vw; min-width:300px;">
+            <input type="hidden" name="registerproject" value="1" >
             <div class="row mb-3">
                <div class="col">
-                  <label class="form-label">First Name:</label>
-                  <input type="text" class="form-control" name="first_name" placeholder="Name">
+                  <label class="form-label">Name:</label>
+                  <input type="text" class="form-control" name="name" placeholder="Name">
                </div>
 
-               <div class="col">
-                  <label class="form-label">Last Name:</label>
-                  <input type="text" class="form-control" name="last_name" placeholder="LAsst name">
-               </div>
-            </div>
-
+            
             <div class="mb-3">
-               <label class="form-label">Email:</label>
-               <input type="email" class="form-control" name="email" placeholder="name@example.com">
-            </div>
-
-            <div class="mb-3">
-               <label class="form-label">Password:</label>
-               <input type="password" class="form-control" name="password" placeholder="Enter password">
-            </div>
-
-            <div class="mb-3 form-check">
-            <label class="form-label">Role:</label>
-            <br>
-               <input type="radio" class="form-check-input" name="role" id="devOps" value="devOps">
-               <label for="admin" class="form-check-label">deVops</label>
-               <br>
-               <input type="radio" class="form-check-input" name="role" id="Testeur" value="Testeur">
-               <label for="user" class="form-check-label">Testeur</label>
-               <br>
-               <input type="radio" class="form-check-input" name="role" id="Developpeur" value="Developpeur">
-               <label for="user" class="form-check-label">Developpeur</label>
+               <label class="form-label">Description:</label>
+               <input type="text" class="form-control" name="description" placeholder="Description">
             </div>
 
             

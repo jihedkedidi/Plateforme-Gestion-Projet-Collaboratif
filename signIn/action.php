@@ -45,9 +45,10 @@ class AuthSystem{
                 $hashed_password= password_hash($password,PASSWORD_DEFAULT);
                 $this->db->registerAdmin($name,$email,$hashed_password,$role);
                 Utils::setFlash('register_success','You are now registered and can now login  !');
-                Utils::redirect('/');
+                Utils::redirect('admin_profile.php');
             }               
     }
+    
         //handle login user
     public function loginUser($email,$password){
         $email=Utils::sanitize($email);
@@ -65,11 +66,14 @@ class AuthSystem{
             Utils::redirect('./');
         }
     }
+    
 
 }
 $authSystem=new AuthSystem();
 if(isset($_POST['registeradmin']))
-    $authSystem->registerUser($_POST['name'],$_POST['email'],$_POST['password'],$_POST['role']);
+    $authSystem->registerUserByAdmin($_POST['name'],$_POST['email'],$_POST['password'],$_POST['role']);
+if(isset($_POST['registerproject']))
+    $authSystem->registerProject($_POST['name'],$_POST['descpription']);
 if(isset($_POST['register'])){
     $authSystem->registerUser($_POST['name'],$_POST['email'],$_POST['password'],$_POST['confirm_password']);
 }else if(isset($_POST['login'])){

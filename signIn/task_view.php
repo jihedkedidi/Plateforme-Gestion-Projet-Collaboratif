@@ -1,8 +1,7 @@
 <?php
-require_once 'User.php';
-require_once 'database.php';
-$db = new Database();
-$users = $db->getAllUsers(); // Implement this method in the User class
+require_once 'Task.php';
+$db = new Task();
+$tasks = $db->getAllTasks(); // Implement this method in the User class
 ?>
 
 <!DOCTYPE html>

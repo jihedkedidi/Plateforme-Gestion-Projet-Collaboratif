@@ -1,8 +1,7 @@
 <?php
-require_once 'User.php';
-require_once 'database.php';
-$db = new Database();
-$users = $db->getAllUsers(); // Implement this method in the User class
+require_once 'project.php';
+$db = new Project();
+$projects = $db->getAllProjects(); // Implement this method in the User class
 ?>
 
 <!DOCTYPE html>
@@ -55,32 +54,28 @@ $users = $db->getAllUsers(); // Implement this method in the User class
                 </div>
             </div>
             <div class="main-content">
-                <h2>User List</h2>
+                <h2>Projects List</h2>
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Action</th>
+                            <th>Description</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($users as $user): ?>
+                        <?php foreach ($projects as $project): ?>
                         <tr>
-                            <td><?php echo $user['id']; ?></td>
-                            <td><?php echo $user['name']; ?></td>
-                            <td><?php echo $user['email']; ?></td>
-                            <td><?php echo $user['role']; ?></td>
+                            <td><?php echo $project['name']; ?></td>
+                            <td><?php echo $project['description']; ?></td>
                             <td>
-                                <a href="edit.php?id=<?php echo $user['id']; ?>" class="btn btn-primary">Edit</a>
-                                <a href="delete.php?id=<?php echo $user['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
+                                <a href="edit_project.php?id=<?php echo $project['id']; ?>" class="btn btn-primary">Edit</a>
+                                <a href="delete_project.php?id=<?php echo $project['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?')">Delete</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-                <a href="add-new.php" class="btn btn-success">Add New User</a>
+                <a href="add-new-project.php" class="btn btn-success">Add New Project</a>
             </div>
         </div>
     </div>

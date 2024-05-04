@@ -1,17 +1,22 @@
 <?php
-require_once 'User.php';
+
+require_once 'database.php';
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $user = new User();
-    $userData = $user->getUserById($id); // Implement this method in the User class
+    $user = new Database();
+    require_once 'database.php';
+    $db = new Database();
+    //$roles = $db->getAllRoles();
+    $userData = $user->getUserById($id);
+    
 }
 
 if (isset($_POST['submit'])) {
     $id = $_POST['id'];
-    $user = new User();
-    $msg = $user->updateUser($id, $_POST['first_name'], $_POST['last_name'], $_POST['email'], $_POST['role'], $_POST['password']);
-    header("Location: index.php?msg=$msg");
+    $user = new Database();
+    $msg = $user->updateUser($id, $_POST['name'], $_POST['email'], $_POST['role'], $_POST['password']);
+    header("Location: admin_profile.php");
     exit();
 }
 ?>
@@ -41,13 +46,10 @@ if (isset($_POST['submit'])) {
     <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
         <input type="hidden" name="id" value="<?php echo $userData['id']; ?>">
         <div class="form-group">
-            <label for="first_name">First Name:</label>
-            <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo $userData['first_name']; ?>" required>
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" name="name" value="<?php echo $userData['name']; ?>" required>
         </div>
-        <div class="form-group">
-            <label for="last_name">Last Name:</label>
-            <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo $userData['last_name']; ?>" required>
-        </div>
+        
         <div class="form-group">
             <label for="email">Email:</label>
             <input type="email" class="form-control" id="email" name="email" value="<?php echo $userData['email']; ?>" required>
@@ -56,6 +58,15 @@ if (isset($_POST['submit'])) {
             <label for="role">Role:</label>
             <input type="text" class="form-control" id="role" name="role" value="<?php echo $userData['role']; ?>" required>
         </div>
+        <!-- <div class="form-group">
+            <label for="role">Role:</label>
+            <select name="role" id="role">
+                <option value="w">--Please choose an option--</option>
+                <?php foreach ($roles as $role): ?>
+                    <option value="<?php echo $role['role']; ?>"><?php echo $role['role']; ?> </option>
+                <?php endforeach; ?>
+            </select>
+        </div> -->
         <div class="form-group">
             <label for="password">Password:</label>
             <input type="password" class="form-control" id="password" name="password" value="<?php echo $userData['password']; ?>" required>

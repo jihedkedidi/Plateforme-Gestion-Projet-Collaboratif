@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'utils.php';
+include 'database.php';
 
 $user = null;
 if(isset($_SESSION['user'])){
@@ -36,6 +37,7 @@ if(isset($_SESSION['user'])){
                 </tr>
                 
             </tbody>
+        
             </table>
 </div>
 </div>
