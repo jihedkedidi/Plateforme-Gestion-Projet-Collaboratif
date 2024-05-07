@@ -54,7 +54,7 @@ $users = $db->getAllUsers();
                      <?php
                      foreach($users as $user) {
                         echo '<option value="'.$user['name'].'">'.$user['name'].' - '.$user['role'].'</option>';
-                     }
+                        }
                      ?>
                </select>
             </div>
