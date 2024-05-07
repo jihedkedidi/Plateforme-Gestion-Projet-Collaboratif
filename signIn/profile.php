@@ -1,12 +1,17 @@
 <?php
 session_start();
 require_once 'utils.php';
+require_once 'project.php';
 include 'database.php';
 
 $user = null;
 if(isset($_SESSION['user'])){
     $user = $_SESSION['user'];
+    $user_id = $user['id'];
+    $projectt = new Project();
+    $projects = $projectt->getProjectsByUserId($user_id);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +42,26 @@ if(isset($_SESSION['user'])){
                         </div>
                     </div>
                 </div>
-            
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($projects as $project): ?>
+                        <tr>
+                            <td><?php echo $project['name']; ?></td>
+                            <td><?php echo $project['description']; ?></td>
+                            <td>
+                                <a href="edit-project.php?id=<?php echo $project['id']; ?>" class="btn btn-primary">Edit</a>
+                                <a href="delete-project.php?id=<?php echo $project['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?')">Delete</a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
                 <div class="col-md-6">
                     <div class="main-content">
                         <h2 class="text-left">User List</h2>

@@ -1,4 +1,3 @@
-use PDOException;
 <?php
 require_once 'config.php';
 
@@ -76,6 +75,17 @@ class Project {
     function assignUserToProject($userId, $projectId) {
         $stmt = $db->prepare("INSERT INTO project_assignments (user_id, project_id) VALUES (?, ?)");
         $stmt->execute([$userId, $projectId]);
+    }
+    public function getProjectsByUserId($id) {
+        $query = "SELECT * FROM project_assignments WHERE user_id = :user_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':user_id', $id);
+        $stmt->execute();
+        $projectIds = $stmt->fetchAll(PDO::FETCH_COLUMN, 1); // Fetch project ids
+
+        $query = "SELECT * FROM projects WHERE id IN (" . implode(",", $projectIds) . ")";
+        $stmt = $this->db->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
      
 }

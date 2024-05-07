@@ -69,5 +69,13 @@ class User {
             return 'Error: ' . $e->getMessage();
         }
     }
+
+    public function getProjectsByUserId($id) {
+        $query = "SELECT * FROM project_assignments WHERE user_id = :user_id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':user_id', $id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>
