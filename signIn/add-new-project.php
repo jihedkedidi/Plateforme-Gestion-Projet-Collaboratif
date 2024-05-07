@@ -1,3 +1,11 @@
+<?php
+
+require_once 'database.php';
+
+$db = new Database();
+$users = $db->getAllUsers();
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,9 +47,17 @@
                <label class="form-label">Description:</label>
                <input type="text" class="form-control" name="description" placeholder="Description">
             </div>
-
-            
-
+            <div class="mb-3">
+               <label class="form-label">Members:</label>
+               <select multiple class="form-control" name="members[]">
+                     <!-- Replace with actual user data -->
+                     <?php
+                     foreach($users as $user) {
+                        echo '<option value="'.$user['name'].'">'.$user['name'].' - '.$user['role'].'</option>';
+                     }
+                     ?>
+               </select>
+            </div>
             <div>
                <button type="submit" class="btn btn-success" name="submit">Save</button>
                <a href="index.php" class="btn btn-danger">Cancel</a>

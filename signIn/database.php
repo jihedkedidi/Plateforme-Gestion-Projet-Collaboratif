@@ -19,7 +19,13 @@ class Database{
     public function getConnection() {
         return $this->pdo;
     }
-    
+    public function getProjectById($id) {
+        $query = "SELECT * FROM projects WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
     //method Register User
     public function register($name, $email, $password){
     
@@ -52,6 +58,34 @@ class Database{
             echo 'Error: ' . $e->getMessage();
         }
     }
+    function addTask($db, $name, $description, $projectId, $dueDate, $userIds) {
+        // Insert the new task into the tasks table
+            $stmt = $db->prepare("INSERT INTO tasks (name, description, project_id, due_date) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$name, $description, $projectId, $dueDate]);
+            
+            // Get the ID of the task we just inserted
+            $taskId = $db->lastInsertId();
+    
+            // Assign the task to each user
+            foreach ($userIds as $userId) {
+                $stmt = $db->prepare("INSERT INTO task_assignments (user_id, task_id) VALUES (?, ?)");
+                $stmt->execute([$userId, $taskId]);
+            }
+    }
+    public function addProject($name, $description) {
+        $sql = "INSERT INTO projects (name, description) VALUES (:name, :description)";
+        $stmt = $this->conn->prepare($sql);
+        try {
+            $stmt->execute([
+                'name' => $name,
+                'description' => $description,
+            ]);
+        } catch(PDOException $e) {
+            echo 'Error: ' . $e->getMessage();
+        }
+        return $this->conn->lastInsertId();
+    }
+        
     //method to login as a user
     public function login($email,$password){
         $sql="SELECT * FROM users WHERE email = :email";
@@ -69,6 +103,19 @@ class Database{
             return false;
         }
     }   
+    public function updateProject($id, $name, $description) {
+        $sql = "UPDATE projects SET name = :name, description = :description WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        try {
+            $stmt->execute([
+                'id' => $id,
+                'name' => $name,
+                'description' => $description,
+            ]);
+        } catch(PDOException $e) {
+            echo 'Error: ' . $e->getMessage();
+        }
+    }
     
     //check email exits
     public function getUserByEmail($email){
@@ -127,6 +174,32 @@ class Database{
         $enums = $stmt->fetch();
         return $enums;
     }
+    public function getAllUsersNames(){
+        $sql = "SELECT name FROM users";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $usersNames = $stmt->fetchAll();
+        return $usersNames;
+    }
+    public function getUserIdByName($name){
+        $sql = "SELECT id FROM users WHERE name = :name";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            'name' => $name,
+        ]);
+        $userId = $stmt->fetch();
+        return $userId;
+    }
+    public function assignUserToProject($userId, $projectId) {
+        $sql = "INSERT INTO project_assignments (user_id, project_id) VALUES (:userId, :projectId)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            'userId' => $userId,
+            'projectId' => $projectId
+        ]);
+    }
+    
+    
 
 }
 ?>

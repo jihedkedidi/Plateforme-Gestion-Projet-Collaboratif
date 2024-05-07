@@ -33,6 +33,12 @@ class User {
         }
     }
     public function deleteUser($id) {
+        // First, delete project assignments associated with the project
+        $query = "DELETE FROM project_assignments WHERE user_id = :user_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':user_id', $id);
+        $stmt->execute();
+        //Second 
         $query = "DELETE FROM users WHERE id = :id";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':id', $id);

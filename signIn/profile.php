@@ -35,9 +35,7 @@ if(isset($_SESSION['user'])){
                     <td><?= $user['created_at']?></td>
                     <td><?= $user['updated_at']?></td>
                 </tr>
-                
             </tbody>
-        
             </table>
 </div>
 </div>

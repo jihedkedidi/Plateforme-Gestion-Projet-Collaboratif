@@ -44,7 +44,7 @@ $projects = $db->getAllProjects(); // Implement this method in the User class
                         <h5 class="card-title">Navigation</h5>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">
-                                <a href="#" class="text-decoration-none">Users List</a>
+                                <a href="admin_profile.php" class="text-decoration-none">Users List</a>
                             </li>
                             <li class="list-group-item">
                                 <a href="project_view.php" class="text-decoration-none">Project List</a>
@@ -68,8 +68,8 @@ $projects = $db->getAllProjects(); // Implement this method in the User class
                             <td><?php echo $project['name']; ?></td>
                             <td><?php echo $project['description']; ?></td>
                             <td>
-                                <a href="edit_project.php?id=<?php echo $project['id']; ?>" class="btn btn-primary">Edit</a>
-                                <a href="delete_project.php?id=<?php echo $project['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?')">Delete</a>
+                                <a href="edit-project.php?id=<?php echo $project['id']; ?>" class="btn btn-primary">Edit</a>
+                                <a href="delete-project.php?id=<?php echo $project['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?')">Delete</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

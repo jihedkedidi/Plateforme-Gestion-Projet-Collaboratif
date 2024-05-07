@@ -1,3 +1,4 @@
+use PDOException;
 <?php
 require_once 'config.php';
 
@@ -55,12 +56,27 @@ class Project {
         } catch(PDOException $e) {
             echo 'Error: ' . $e->getMessage();
         }
+
     }
     public function deleteProject($id) {
+        // First, delete project assignments associated with the project
+        $query = "DELETE FROM project_assignments WHERE project_id = :project_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':project_id', $id);
+        $stmt->execute();
+    
+        // Then, delete the project itself
         $query = "DELETE FROM projects WHERE id = :id";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':id', $id);
+        
         return $stmt->execute();
     }
+    
+    function assignUserToProject($userId, $projectId) {
+        $stmt = $db->prepare("INSERT INTO project_assignments (user_id, project_id) VALUES (?, ?)");
+        $stmt->execute([$userId, $projectId]);
+    }
+     
 }
 ?>
