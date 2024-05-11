@@ -29,6 +29,18 @@ $projects = $db->getAllProjects(); // Implement this method in the User class
             width: 70%;
             float: left;
         }
+        .status-pending {
+        background-color: #ffc107; /* Yellow */
+        }
+
+        .status-in-progress {
+            background-color: #007bff; /* Blue */
+        }
+
+        .status-completed {
+            background-color: #28a745; /* Green */
+        }
+
     </style>
 </head>
 
@@ -60,6 +72,7 @@ $projects = $db->getAllProjects(); // Implement this method in the User class
                         <tr>
                             <th>Name</th>
                             <th>Description</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,9 +80,11 @@ $projects = $db->getAllProjects(); // Implement this method in the User class
                         <tr>
                             <td><?php echo $project['name']; ?></td>
                             <td><?php echo $project['description']; ?></td>
+                            <td><span class="badge badge-pill  status-<?=$project['status']?>" ><?php echo $project['status']; ?></span></td>
                             <td>
-                                <a href="edit-project.php?id=<?php echo $project['id']; ?>" class="btn btn-primary">Edit</a>
-                                <a href="delete-project.php?id=<?php echo $project['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?')">Delete</a>
+                            <a href="add_task.php?id=<?php echo $project['id']; ?>" class="btn btn-primary">Add Task</a>
+                            <a href="edit-project.php?id=<?php echo $project['id']; ?>" class="btn btn-primary">Edit</a>
+                            <a href="delete-project.php?id=<?php echo $project['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?')">Delete</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

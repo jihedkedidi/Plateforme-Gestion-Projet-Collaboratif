@@ -8,6 +8,7 @@ if (isset($_GET['id'])) {
     require_once 'database.php';
     $db = new Database();
     $projectData = $project->getProjectById($id);
+    //$allProjectsStatus = $project->getAllProjectsStatus();
     
 }
 
@@ -53,7 +54,6 @@ if (isset($_POST['submit'])) {
             <label for="description">Description:</label>
             <input type="description" class="form-control" id="description" name="description" value="<?php echo $projectData['description']; ?>" required>
         </div>
-        
         
         <button type="submit" class="btn btn-primary" name="submit">Update</button>
     </form>

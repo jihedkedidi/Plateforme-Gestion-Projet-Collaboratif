@@ -57,9 +57,20 @@ class Project {
         }
 
     }
+    // public function getAllProjectsStatus() {
+    //     $query = "SELECT status FROM projects";
+    //     $stmt = $this->db->query($query);
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
     public function deleteProject($id) {
-        // First, delete project assignments associated with the project
+
+        
         $query = "DELETE FROM project_assignments WHERE project_id = :project_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':project_id', $id);
+        $stmt->execute();
+
+        $query = "DELETE FROM tasks WHERE project_id = :project_id";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':project_id', $id);
         $stmt->execute();
@@ -76,6 +87,7 @@ class Project {
         $stmt = $db->prepare("INSERT INTO project_assignments (user_id, project_id) VALUES (?, ?)");
         $stmt->execute([$userId, $projectId]);
     }
+
     public function getProjectsByUserId($id) {
         $query = "SELECT * FROM project_assignments WHERE user_id = :user_id";
         $stmt = $this->db->prepare($query);
@@ -87,6 +99,6 @@ class Project {
         $stmt = $this->db->query($query);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-     
+    
 }
 ?>

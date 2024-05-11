@@ -1,9 +1,18 @@
 <?php
-
 require_once 'database.php';
+require_once 'task.php';
 
-$db = new Database();
-$users = $db->getAllUsers();
+if (isset($_GET['id'])) {
+   
+   $db = new Database();
+   $users = $db->getAllUsers(); 
+}  
+if (isset($_POST['submit'])) {   
+   $task = new Task();
+   //$taskId=$task->addTask($_POST['name'], $_POST['description'], $_POST['id']);
+
+   $task->addTaskByAdmin($_POST['name'], $_POST['description'], $_POST['id'],$_POST['members']);
+}
 
 
 ?>
@@ -30,42 +39,37 @@ $users = $db->getAllUsers();
 
    <div class="container">
       <div class="text-center mb-4">
-         <h3>Add New User</h3>
-         <p class="text-muted">Complete the form below to add a new project</p>
+         <h3>Add New Task</h3>
+         <p class="text-muted">Complete the form below to add a new Task</p>
       </div>
 
       <div class="container d-flex justify-content-center">
-         <form action="action.php" method="post" style="width:50vw; min-width:300px;">
-            <input type="hidden" name="registerproject" value="1" >
+         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" style="width:50vw; min-width:300px;">
+            <input type="hidden" name="id" value="<?php echo $_GET['id'];?>">
             <div class="row mb-3">
                <div class="col">
                   <label class="form-label">Name:</label>
                   <input type="text" class="form-control" name="name" placeholder="Name">
                </div>
-
-            
             <div class="mb-3">
                <label class="form-label">Description:</label>
                <input type="text" class="form-control" name="description" placeholder="Description">
             </div>
-            <div class="mb-3">
-               <label class="form-label">task:</label>
-               <input type="text" class="form-control" name="task" placeholder="Task">
-            </div>
-            <div class="mb-3">
-               <label class="form-label">Members:</label>
+            
+            <div class="mb-3"  >
+               <label class="form-label" >Members:</label>
                <select multiple class="form-control" name="members[]">
-                     <!-- Replace with actual user data -->
+                     
                      <?php
-                     foreach($users as $user) {
-                        echo '<option value="'.$user['name'].'">'.$user['name'].' - '.$user['role'].'</option>';
+                        foreach($users as $user) {
+                            echo '<option value="'.$user['name'].'">'.$user['name'].'</option>';
                         }
                      ?>
                </select>
             </div>
             <div>
                <button type="submit" class="btn btn-success" name="submit">Save</button>
-               <a href="index.php" class="btn btn-danger">Cancel</a>
+               <a href="project_view.php" class="btn btn-danger">Cancel</a>
             </div>
          </form>
       </div>

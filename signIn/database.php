@@ -5,14 +5,14 @@ class Database{
 
     private const DSN = 'mysql:host='.DB_HOST.';dbname='.DB_NAME;
     private $conn;
-    private $pdo;
+    //private $pdo;
     public function __construct(){
         try{
             $this->conn=new PDO(self::DSN,DB_USER,DB_PASS);
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             
-        }catch(PDOExeption $e){
+        }catch(PDOException $e){
             echo 'Connection Failed : '.$e->getMessage();
         }
     }
@@ -58,20 +58,6 @@ class Database{
             echo 'Error: ' . $e->getMessage();
         }
     }
-    function addTask($db, $name, $description, $projectId, $dueDate, $userIds) {
-        // Insert the new task into the tasks table
-            $stmt = $db->prepare("INSERT INTO tasks (name, description, project_id, due_date) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$name, $description, $projectId, $dueDate]);
-            
-            // Get the ID of the task we just inserted
-            $taskId = $db->lastInsertId();
-    
-            // Assign the task to each user
-            foreach ($userIds as $userId) {
-                $stmt = $db->prepare("INSERT INTO task_assignments (user_id, task_id) VALUES (?, ?)");
-                $stmt->execute([$userId, $taskId]);
-            }
-    }
     public function addProject($name, $description) {
         $sql = "INSERT INTO projects (name, description) VALUES (:name, :description)";
         $stmt = $this->conn->prepare($sql);
@@ -85,6 +71,28 @@ class Database{
         }
         return $this->conn->lastInsertId();
     }
+    public function getProjectIdByName($name) {
+        $sql = "SELECT id FROM projects WHERE name = :name";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            'name' => $name,
+        ]);
+        $projectId = $stmt->fetch();
+        return $projectId;
+    }
+    
+        
+    public function assignUserToTask($userId, $taskId) {
+        try {
+            $stmt = $this->conn->prepare("INSERT INTO task_assignments (user_id, task_id) VALUES (?, ?)");
+            $stmt->execute([$userId, $taskId]);
+            echo "User assigned to task successfully.<br>";
+        } catch(PDOException $e) {
+            // Log or handle the error gracefully
+            echo "Error assigning user to task: " . $e->getMessage() . "<br>";
+        }
+    }
+    
         
     //method to login as a user
     public function login($email,$password){
@@ -145,6 +153,17 @@ class Database{
         $users = $stmt->fetchAll();
         return $users;
     }
+    public function getMembersByProjectId($selectedProjectId){
+        $query = "SELECT * FROM project_assignments WHERE project_id = :project_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':project_id', $selectedProjectId);
+        $stmt->execute();
+        $userIds = $stmt->fetchAll(PDO::FETCH_COLUMN, 0); // Fetch user ids
+
+        $query = "SELECT * FROM users WHERE id IN (" . implode(",", $userIds) . ")";
+        $stmt = $this->db->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     public function updateUser($id, $name, $email, $role, $password) {
         $sql = "UPDATE users SET name = :name, email = :email, role = :role, password = :password WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
@@ -197,6 +216,12 @@ class Database{
             'userId' => $userId,
             'projectId' => $projectId
         ]);
+    }
+    public function addTask($name, $description ){
+
+        $sql = "INSERT INTO tasks (name, description ) VALUES (:name, :description)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['name' => $name, 'description' => $description]);
     }
     
     

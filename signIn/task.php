@@ -1,10 +1,12 @@
 <?php
 require_once 'config.php';
-
+require_once 'utils.php';
+require_once 'database.php';    
 class task{
 
     private const DSN = 'mysql:host='.DB_HOST.';dbname='.DB_NAME;
     private $db;
+
     public function __construct(){
         try{
             $this->db=new PDO(self::DSN,DB_USER,DB_PASS);
@@ -14,60 +16,67 @@ class task{
             echo 'Connection Failed : '.$e->getMessage();
         }
     }
-    //1- add task
-    function addTask($db, $name, $description, $projectId, $dueDate, $userIds) {
-    // Insert the new task into the tasks table
-        $stmt = $db->prepare("INSERT INTO tasks (name, description, project_id, due_date) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$name, $description, $projectId, $dueDate]);
-        
-        // Get the ID of the task we just inserted
-        $taskId = $db->lastInsertId();
 
-        // Assign the task to each user
-        foreach ($userIds as $userId) {
-            $stmt = $db->prepare("INSERT INTO task_assignments (user_id, task_id) VALUES (?, ?)");
-            $stmt->execute([$userId, $taskId]);
-        }
+    public function getConnection() {
+        return $this->db;
     }
     
-    function getTasksForUser($db, $userId) {
-        $stmt = $db->prepare("
-            SELECT tasks.* 
-            FROM tasks 
-            JOIN task_assignments ON tasks.id = task_assignments.task_id 
-            WHERE task_assignments.user_id = ?
-        ");
-        $stmt->execute([$userId]);
     
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    //2- update task
-    function updateTask($db, $taskId, $name, $description, $projectId, $dueDate) {
-        $stmt = $db->prepare("UPDATE tasks SET name = ?, description = ?, project_id = ?, due_date = ? WHERE id = ?");
-        $stmt->execute([$name, $description, $projectId, $dueDate, $taskId]);
-    }
-
-
-
-    //2- add task
-    public function addTask($task, $user_id) {
-        $status = 'pending';
-        $sql = "INSERT INTO tasks (task, status, user_id) VALUES (:task, :status, :user_id)";
+    public function addTask($name, $description, $project_id) {
+        $sql = "INSERT INTO tasks (name, description, project_id) VALUES (:name, :description, :project_id)";
         $stmt = $this->db->prepare($sql);
-        try {
-            $stmt->execute([
-                'task' => $task,
-                'status' => $status,
-                'user_id' => $user_id,
-            ]);
-            echo 'task added';
-        } catch(PDOException $e) {
-            echo 'Error: ' . $e->getMessage();
+        $result = $stmt->execute(['name' => $name, 'description' => $description, 'project_id' => $project_id]);
+       
+        return $this->db->lastInsertId();
+    }
+    
+
+    public function assignUserToTask($userId, $taskId) {
+        if ($userId !== false) {
+            $stmt = $this->db->prepare("INSERT INTO task_assignments (user_id, task_id) VALUES (?, ?)");
+            $stmt->execute([$userId, $taskId]);
+        } else {
+            echo $userId    ;   
+            // Handle case where user doesn't exist
+            echo $userId; 
+            echo "User does not exist. Skipping assignment.<br>";
         }
     }
-    //after choosing a project in the first step the admin gonna choose from the users list the users that he gonna afect the task as per defaults the status is pending 
+    
 
+    public function getUserIdByName($name){
+        $sql = "SELECT id FROM users WHERE name = :name";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['name' => $name]);
+        $userId = $stmt->fetchColumn(); 
+        return $userId;
+    }
+    public function addTaskByAdmin($name, $description, $project_id, $members) {
+        $taskId = $this->addTask($name, $description, $project_id);
+        if ($taskId) {
+            foreach ($members as $userName) {
+                $userIds = $this->db->getUserIdByName($userName);
+                if (is_array($userIds)) {
+                    foreach ($userIds as $userId) {
+                        $this->db->assignUserToTask($userId, $projectId);
+                    }
+                } elseif ($userIds !== false) {
+                    $this->db->assignUserToTask($userIds, $projectId);
+                } else {
+                    // Handle case where user doesn't exist
+                    echo "User $userName does not exist. Skipping assignment.<br>";
+                }
+            }
+            Utils::setFlash('register_success', 'You are now registered and can now login!');
+            Utils::redirect('project_view.php');
+        } else {
+            // Handle case where project creation failed
+            echo "Failed to create project.<br>";
+        }
+        
+    }
+    
+    
 }
 
 ?>

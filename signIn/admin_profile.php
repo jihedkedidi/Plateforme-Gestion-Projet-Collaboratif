@@ -50,6 +50,9 @@ $users = $db->getAllUsers(); // Implement this method in the User class
                             <li class="list-group-item">
                                 <a href="project_view.php" class="text-decoration-none">Project List</a>
                             </li>
+                            <li class="list-group-item">
+                                <a href="add_task.php" class="text-decoration-none">Add Task</a>
+                            </li>
                         </ul>
                     </div>
                 </div>

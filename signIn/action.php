@@ -52,17 +52,18 @@ class AuthSystem{
     public function registerProjectByAdmin($name, $description, $members){
         $name = Utils::sanitize($name);
         $description = Utils::sanitize($description);
-        $projectId = $this->db->addProject($name, $description); // Get the ID of the newly created project
-    
+        $projectId = $this->db->addProject($name, $description); 
         if ($projectId) {
             foreach ($members as $userName) {
                 $userIds = $this->db->getUserIdByName($userName);
                 if (is_array($userIds)) {
                     foreach ($userIds as $userId) {
                         $this->db->assignUserToProject($userId, $projectId);
+                        $this->db->assignUserToTask($userId, $projectId);
                     }
                 } elseif ($userIds !== false) {
                     $this->db->assignUserToProject($userIds, $projectId);
+                    $this->db->assignUserToTask($userIds, $projectId);
                 } else {
                     // Handle case where user doesn't exist
                     echo "User $userName does not exist. Skipping assignment.<br>";
@@ -75,6 +76,23 @@ class AuthSystem{
             echo "Failed to create project.<br>";
         }
     }
+    public function registerTaskByAdmin($name, $description){
+        $name = Utils::sanitize($name);
+        $description = Utils::sanitize($description);
+        $taskId = $this->db->addTask($name, $description);
+    
+        if ($taskId) {
+            Utils::setFlash('register_success', 'You are now registered and can now login!');
+            Utils::redirect('project_view.php');
+        } else {
+            // Handle case where project creation failed
+            echo "Failed to create project.<br>";
+        }
+    }
+    
+    
+ 
+    
         //handle login user
     public function loginUser($email,$password){
         $email=Utils::sanitize($email);
@@ -106,6 +124,8 @@ if(isset($_POST['registeradmin']))
     $authSystem->registerUserByAdmin($_POST['name'],$_POST['email'],$_POST['password'],$_POST['role']);
 if(isset($_POST['registerproject']))
     $authSystem->registerProjectByAdmin($_POST['name'],$_POST['description'],$_POST['members']);
+if(isset($_POST['registertask']))
+    $authSystem->registerTaskByAdmin($_POST['name'],$_POST['description']);
 if(isset($_POST['register'])){
     $authSystem->registerUser($_POST['name'],$_POST['email'],$_POST['password'],$_POST['confirm_password']);
 }else if(isset($_POST['login'])){
